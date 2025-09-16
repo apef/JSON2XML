@@ -11,11 +11,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
-
 public class Main {
   public static void main(String[] args) throws IOException {
     String jsonStr = null;
-    try (InputStream in = Main.class.getResourceAsStream("/RAWDATA.JSON"))  {
+    try (InputStream in = Main.class.getResourceAsStream("/RAWDATA.JSON")) {
       if (in == null) {
         throw new FileNotFoundException("JSON File could not be found on the classpath");
       } else {
@@ -30,6 +29,15 @@ public class Main {
     }
   }
 
+  public static boolean isValidJson(String json) {
+    try {
+      JsonParser.parseString(json);
+      return true;
+    } catch (JsonSyntaxException err) {
+      return false;
+    }
+  }
+
   public static File parser(String json) {
     Boolean isValidJson = isValidJson(json);
 
@@ -38,30 +46,40 @@ public class Main {
     }
 
     JsonObject jsonbj = JsonParser.parseString(json).getAsJsonObject();
-    // System.out.println(jsonbj);
-    // JsonObject jsonObjectFeatures = jsonobj.getAsJsonObject("features");
     JsonArray features = jsonbj.getAsJsonArray("features");
-    // System.out.println(features);
 
     for (JsonElement jsonElement : features) {
-      System.out.println(jsonElement.getClass());
+      // System.out.println(jsonElement.getClass());
 
       JsonObject feature = jsonElement.getAsJsonObject();
       JsonObject attributes = feature.getAsJsonObject("attributes");
-      // System.out.println("Element: " + attributes);
+      // Lamp check = gson.fromJson(attributes.)
       JsonObject geometry = feature.getAsJsonObject("geometry");
-      System.out.println("ATT: " + attributes + "\n GEO: " + geometry);
+      // System.out.println("ATT: " + attributes + "\n GEO: " + geometry);
+
+      String objID = attributes.get("OBJECTID").getAsString();
+      String id = attributes.get("ID").getAsString();
+      String owner = attributes.get("Owner").getAsString();
+      String vaghallare = attributes.get("Vaghallare").getAsString();
+      
+      System.out.println(objID + " " + id + " " + owner + " " + vaghallare);
     }
 
     return null;
   }
 
-  public static boolean isValidJson(String json) {
-    try {
-      JsonParser.parseString(json);
-      return true;
-    } catch(JsonSyntaxException err) {
-      return false;
-    }
-  }
+  /**
+   * POJO classes to use with Gson (templates which lets me use Javascript dot syntax)
+   */
+  // public class Lamp {
+  //   String objectid;
+  //   String id;
+  //   String owner;
+  //   String vaghallare;
+  // } 
+
+  // public class geometry {
+  //   float X;
+  //   float Y;
+  // }
 }
