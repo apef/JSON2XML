@@ -1,7 +1,9 @@
 package com.json2xml;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import com.google.gson.Gson;
@@ -25,7 +27,7 @@ public class Main {
     if (jsonStr.equals(null)) {
       System.err.println("JSON file could not be found, check the filepath.");
     } else {
-      File XML = parser(jsonStr);
+      String XML = parser(jsonStr);
     }
   }
 
@@ -38,35 +40,56 @@ public class Main {
     }
   }
 
-  public static File parser(String json) {
+  public static String parser(String json) {
     Boolean isValidJson = isValidJson(json);
 
     if (!isValidJson) {
       return null;
     }
+    StringBuilder sb = new StringBuilder();
 
     JsonObject jsonbj = JsonParser.parseString(json).getAsJsonObject();
     JsonArray features = jsonbj.getAsJsonArray("features");
 
-    for (JsonElement jsonElement : features) {
-      // System.out.println(jsonElement.getClass());
+    sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 
-      JsonObject feature = jsonElement.getAsJsonObject();
-      JsonObject attributes = feature.getAsJsonObject("attributes");
-      // Lamp check = gson.fromJson(attributes.)
-      JsonObject geometry = feature.getAsJsonObject("geometry");
-      // System.out.println("ATT: " + attributes + "\n GEO: " + geometry);
-
-      String objID = attributes.get("OBJECTID").getAsString();
-      String id = attributes.get("ID").getAsString();
-      String owner = attributes.get("Owner").getAsString();
-      String vaghallare = attributes.get("Vaghallare").getAsString();
-      
-      System.out.println(objID + " " + id + " " + owner + " " + vaghallare);
+    if (features == null) {
+      System.out.println("Size less than one");
+      sb.append("<Geometries/>");
+    } else {
+      for (JsonElement jsonElement : features) {
+        JsonObject feature = jsonElement.getAsJsonObject();
+        JsonObject attributes = feature.getAsJsonObject("attributes");
+        JsonObject geometry = feature.getAsJsonObject("geometry");
+  
+        String objID = getAttributeAsString(attributes, "OBJECTID");
+        String owner = getAttributeAsString(attributes, "Owner");
+        String vaghallare = getAttributeAsString(attributes, "Vaghallare");
+        
+        String id = getAttributeAsString(attributes, "ID");
+        id = (id == null) ? "ID Saknas" : id;
+  
+        String X = getAttributeAsString(geometry, "x");
+        String Y = getAttributeAsString(geometry, "y");
+        
+      }
     }
 
-    return null;
+    return sb.toString();
   }
+
+  private static String getAttributeAsString(JsonObject object, String value) {
+    String returnValue = null;
+    try {
+      returnValue = object.get(value).getAsString();
+    } catch (UnsupportedOperationException | NullPointerException err) {
+      System.err.println(err + " " + value);
+    }
+
+    return returnValue;
+  }
+
+  // <Geometries/> if none
 
   /**
    * POJO classes to use with Gson (templates which lets me use Javascript dot syntax)
