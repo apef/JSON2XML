@@ -5,6 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class Main {
   public static void main(String[] args) throws IOException {
@@ -25,6 +29,17 @@ public class Main {
   }
 
   public static File parser(String json) {
+
+    JsonObject jsonbj = JsonParser.parseString(json).getAsJsonObject();
+    // System.out.println(jsonbj);
+    // JsonObject jsonObjectFeatures = jsonobj.getAsJsonObject("features");
+    JsonArray features = jsonbj.getAsJsonArray("features");
+    // System.out.println(features);
+
+    for (JsonElement jsonElement : features) {
+      System.out.println("Element: " + jsonElement);
+    }
+    
     return null;
   }
 }
