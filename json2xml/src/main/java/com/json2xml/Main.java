@@ -9,6 +9,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+
 
 public class Main {
   public static void main(String[] args) throws IOException {
@@ -29,6 +31,11 @@ public class Main {
   }
 
   public static File parser(String json) {
+    Boolean isValidJson = isValidJson(json);
+
+    if (!isValidJson) {
+      return null;
+    }
 
     JsonObject jsonbj = JsonParser.parseString(json).getAsJsonObject();
     // System.out.println(jsonbj);
@@ -37,9 +44,24 @@ public class Main {
     // System.out.println(features);
 
     for (JsonElement jsonElement : features) {
-      System.out.println("Element: " + jsonElement);
+      System.out.println(jsonElement.getClass());
+
+      JsonObject feature = jsonElement.getAsJsonObject();
+      JsonObject attributes = feature.getAsJsonObject("attributes");
+      // System.out.println("Element: " + attributes);
+      JsonObject geometry = feature.getAsJsonObject("geometry");
+      System.out.println("ATT: " + attributes + "\n GEO: " + geometry);
     }
-    
+
     return null;
+  }
+
+  public static boolean isValidJson(String json) {
+    try {
+      JsonParser.parseString(json);
+      return true;
+    } catch(JsonSyntaxException err) {
+      return false;
+    }
   }
 }
