@@ -1,5 +1,6 @@
 package com.json2xml;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Set;
 
@@ -31,7 +32,7 @@ public class Parser {
   private final String SELECTABLE = "Selectable";
   private final String JSON_FEATURES = "features";
 
-  public String parseXML(String json) throws XMLStreamException {
+  public String parseXML(String json) throws XMLStreamException, IOException {
     StringWriter output = new StringWriter();
     XMLOutputFactory XMLOut = XMLOutputFactory.newFactory();
     XMLStreamWriter XMLWriter = XMLOut.createXMLStreamWriter(output);
@@ -49,9 +50,10 @@ public class Parser {
     XMLWriter.writeCharacters("\n");
     if (features == null) {
       System.out.println("Size less than one");
-      XMLWriter.writeEmptyElement(XML_GEOMETRIES_ELEMENT);
-      XMLWriter.writeCharacters("\n");
-
+      XMLWriter.writeStartElement(XML_GEOMETRIES_ELEMENT);
+      XMLWriter.writeEndElement();
+      // XMLWriter.writeEmptyElement(XML_GEOMETRIES_ELEMENT);
+      // XMLWriter.flush();
     } else {
 
       XMLWriter.writeStartElement(XML_GEOMETRIES_ELEMENT);
@@ -69,7 +71,7 @@ public class Parser {
         String vaghallare = getAttributeAsString(attributes, "Vaghallare"); // Unused in output?
 
         String id = getAttributeAsString(attributes, "ID");
-        id = (id == null) ? "ID saknas" : id;
+        id = handleNullId(id);
 
         String X = getAttributeAsString(geometry, "x");
         String Y = getAttributeAsString(geometry, "y");
@@ -94,10 +96,19 @@ public class Parser {
       XMLWriter.writeEndElement();
     }
 
+    String XML = output.toString();
+    XMLWriter.close();
+    output.close();
     return output.toString();
   }
 
-  private String generalizeOwnerName(String name) {
+  public String handleNullId(String id) {
+    id = (id == null) ? "ID saknas" : id;
+
+    return id;
+  }
+
+  public String generalizeOwnerName(String name) {
     if (name.toLowerCase().contains("ga:")) {
       // In XML it says: 'fastighetesägare', using that to pass the tests for now.
       name = "GA (fastighetesägare i området)";
@@ -106,7 +117,7 @@ public class Parser {
     return name;
   }
 
-  private void writeElement(XMLStreamWriter XMLWriter, String tag, String value, int depth) throws XMLStreamException {
+  public void writeElement(XMLStreamWriter XMLWriter, String tag, String value, int depth) throws XMLStreamException {
     XMLWriter.writeCharacters("\t".repeat(depth));
     XMLWriter.writeStartElement(tag);
     if (value != null) {
@@ -116,7 +127,7 @@ public class Parser {
     XMLWriter.writeCharacters("\n");
   }
 
-  private boolean isSelectable(String name) {
+  public boolean isSelectable(String name) {
     Set<String> invalidNames = Set.of("Kalmar kommun - Fastighetsservice", "Trafikverket");
     if (!invalidNames.contains(name) && !(name.toLowerCase().contains("GA:".toLowerCase()))) {
       return true;
@@ -124,7 +135,7 @@ public class Parser {
     return false;
   }
 
-  private String getAttributeAsString(JsonObject object, String value) {
+  public String getAttributeAsString(JsonObject object, String value) {
     String returnValue = null;
     try {
       returnValue = object.get(value).getAsString();
@@ -135,7 +146,7 @@ public class Parser {
     return returnValue;
   }
 
-  private boolean isValidJson(String json) {
+  public boolean isValidJson(String json) {
     try {
       JsonParser.parseString(json);
       return true;

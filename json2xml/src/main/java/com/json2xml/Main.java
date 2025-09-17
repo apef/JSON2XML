@@ -18,7 +18,7 @@ public class Main {
     String expectedXMLpath = "/ExpectedXML.XML";
     String jsonStr = readDocument(jsonPath);
     String expXmlString = readDocument(expectedXMLpath);
-    
+    System.out.println(jsonStr);
     // System.out.println("---------EXPECTED----------\n\n" + expXmlString + "--------------\n\n\n\n\n");
     if (jsonStr.equals(null)) {
       System.err.println("JSON file could not be found, check the filepath.");
