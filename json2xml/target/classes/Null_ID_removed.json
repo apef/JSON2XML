@@ -1,0 +1,149 @@
+{
+  "displayFieldName": "Owner",
+  "fieldAliases": {
+    "OBJECTID": "OBJECTID",
+    "ID": "ID",
+    "Owner": "Owner",
+    "Vaghallare": "Väghållare"
+  },
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {
+    "wkid": 3010,
+    "latestWkid": 3010
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID"
+    },
+    {
+      "name": "ID",
+      "type": "esriFieldTypeString",
+      "alias": "ID",
+      "length": 50
+    },
+    {
+      "name": "Owner",
+      "type": "esriFieldTypeString",
+      "alias": "Owner",
+      "length": 50
+    },
+    {
+      "name": "Vaghallare",
+      "type": "esriFieldTypeString",
+      "alias": "Väghållare",
+      "length": 50
+    }
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 2227910,
+        "ID": "7910",
+        "Owner": "Kalmar Energi",
+        "Vaghallare": "Kalmar kommun"
+      },
+      "geometry": {
+        "x": 140767.4570000004,
+        "y": 6287207.636700001
+      }
+    },
+    {
+      "attributes": {
+        "OBJECTID": 2227911,
+        "ID": "7911",
+        "Owner": "Kalmar kommun - Fastighetsservice",
+        "Vaghallare": "Kalmar kommun"
+      },
+      "geometry": {
+        "x": 140742.23440000042,
+        "y": 6287196.8477
+      }
+    },
+    {
+      "attributes": {
+        "OBJECTID": 2227912,
+        "ID": "7912",
+        "Owner": "Trafikverket",
+        "Vaghallare": "Kalmar kommun"
+      },
+      "geometry": {
+        "x": 140719.6054999996,
+        "y": 6287187.168
+      }
+    },
+    {
+      "attributes": {
+        "OBJECTID": 2227913,
+        "ID": "7913",
+        "Owner": "MELBY GA:2",
+        "Vaghallare": "Kalmar kommun"
+      },
+      "geometry": {
+        "x": 140700.9413999999,
+        "y": 6287179.183599999
+      }
+    },
+    {
+      "attributes": {
+        "OBJECTID": 2227914,
+        "ID": "7914",
+        "Owner": "Kalmar Energi",
+        "Vaghallare": "Kalmar kommun"
+      },
+      "geometry": {
+        "x": 140682.54690000042,
+        "y": 6287171.3125
+      }
+    },
+    {
+      "attributes": {
+        "OBJECTID": 2220210,
+        "ID": "0210",
+        "Owner": "Kalmar Energi",
+        "Vaghallare": "Kalmar kommun"
+      },
+      "geometry": {
+        "x": 140740.30399999954,
+        "y": 6287181.893999999
+      }
+    },
+    {
+      "attributes": {
+        "OBJECTID": 2220225,
+        "ID": "0225",
+        "Owner": "Kalmar Energi",
+        "Vaghallare": "Kalmar kommun"
+      },
+      "geometry": {
+        "x": 140791.41000000015,
+        "y": 6287206.831
+      }
+    },
+    {
+      "attributes": {
+        "OBJECTID": 2220207,
+        "ID": "0207",
+        "Owner": "Kalmar Energi",
+        "Vaghallare": "Kalmar kommun"
+      },
+      "geometry": {
+        "x": 140712.85900000017,
+        "y": 6287170.102
+      }
+    },
+    {
+      "attributes": {
+        "OBJECTID": 2220203,
+        "ID": "0203",
+        "Owner": "Kalmar Energi",
+        "Vaghallare": "Kalmar kommun"
+      },
+      "geometry": {
+        "x": 140685.30399999954,
+        "y": 6287157.946
+      }
+    }
+  ]
+}

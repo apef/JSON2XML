@@ -15,14 +15,17 @@ public class MainTest {
     String json = readResource("/RAWDATA.JSON");
     String expectedXml = readResource("/ExpectedXML.XML");
     
-    String convertedXml = null;
-    // try {
-    //   convertedXml = Main.parser(json);
-    // } catch (XMLStreamException e) {
-    //   e.printStackTrace();
-    // }
+    Parser parser = new Parser();
+    String convertedXML = null;
+    try {
+      convertedXML = parser.parseXML(json);
 
-    assertEquals(expectedXml, convertedXml);
+    } catch (XMLStreamException err) {
+      System.err.println(err);
+    }
+
+    
+    assertEquals(expectedXml, convertedXML);
   }
 
   @Test
@@ -42,7 +45,7 @@ public class MainTest {
 
   private static String readResource(String path) {
     String jsonStr = null;
-    try (InputStream in = Main.class.getResourceAsStream("/RAWDATA.JSON")) {
+    try (InputStream in = Main.class.getResourceAsStream(path)) {
       if (in == null) {
         throw new FileNotFoundException("JSON File could not be found on the classpath");
       } else {
