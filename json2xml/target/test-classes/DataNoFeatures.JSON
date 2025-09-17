@@ -1,0 +1,17 @@
+{
+  "displayFieldName": "Owner",
+  "fieldAliases": {
+    "OBJECTID": "OBJECTID",
+    "ID": "ID",
+    "Owner": "Owner",
+    "Vaghallare": "Väghållare"
+  },
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {
+    "wkid": 3010,
+    "latestWkid": 3010
+  },
+  "fields": [
+    {}
+  ]
+}
