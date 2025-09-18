@@ -15,9 +15,10 @@ import javax.xml.stream.XMLStreamReader;
 public class MainTest {
   @Test
   void convertsJsonToExpectedXml() throws XMLStreamException, IOException {
-
-    String json = readResource("/Null_ID_removed.JSON");
-    String expectedXml = readResource("/ExpectedXML.XML");
+    // Using input JSON that has null ID's removed
+    // This ensures that the input and output match exactly (as the expected output has removed null ID entries)
+    String json = readResource("Null_ID_removed.JSON");
+    String expectedXml = readResource("ExpectedXML.XML");
 
     Parser parser = new Parser();
     String convertedXML = parser.parseXML(json);
@@ -27,19 +28,19 @@ public class MainTest {
 
   @Test
   void readJsonToString() {
-    String json = readResource("/RAWDATA.JSON");
+    String json = readResource("RAWDATA.JSON");
     assertFalse(json == null);
   }
 
   @Test
   void readXmlToString() {
-    String xml = readResource("/ExpectedXML.XML");
+    String xml = readResource("ExpectedXML.XML");
     assertFalse(xml == null);
   }
 
   @Test
   void verifiesIfValidJson() {
-    String validJson = readResource("/Null_ID_removed.JSON");
+    String validJson = readResource("Null_ID_removed.JSON");
     String invalidJson = "geometry: {x:this, y: shouldFail";
     Parser parse = new Parser();
     Boolean isValid = parse.isValidJson(validJson);
@@ -52,7 +53,7 @@ public class MainTest {
 
   @Test
   void verifiesIfValidXML() throws IOException, XMLStreamException {
-    String json = readResource("/Null_ID_removed.JSON");
+    String json = readResource("Null_ID_removed.JSON");
     String invalidXML = readResource("InvalidXML.XML");
 
     Parser parser = new Parser();
@@ -65,7 +66,7 @@ public class MainTest {
 
   @Test
   void parserOutputNotNull() throws XMLStreamException, IOException {
-    String json = readResource("/Null_ID_removed.JSON");
+    String json = readResource("Null_ID_removed.JSON");
 
     Parser parser = new Parser();
     String xml = parser.parseXML(json);
@@ -86,8 +87,8 @@ public class MainTest {
 
   @Test
   void EmptyFeaturesShouldLeadToEmptyGeometriesElement() throws XMLStreamException, IOException {
-    String json = readResource("/DataNoFeatures.JSON");
-    String expectedResult = readResource("/EmptyElementXML.XML");
+    String json = readResource("DataNoFeatures.JSON");
+    String expectedResult = readResource("EmptyElementXML.XML");
     Parser parser = new Parser();
     String xml = parser.parseXML(json);
 
@@ -113,8 +114,9 @@ public class MainTest {
   }
 
   private static String readResource(String path) {
+    ClassLoader cLoader = Thread.currentThread().getContextClassLoader();
     String jsonStr = null;
-    try (InputStream in = Main.class.getResourceAsStream(path)) {
+    try (InputStream in = cLoader.getResourceAsStream(path)) {
       if (in == null) {
         throw new FileNotFoundException("JSON File could not be found on the classpath");
       } else {

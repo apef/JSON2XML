@@ -72,7 +72,6 @@ public class Parser {
 
         String objID = getAttributeAsString(attributes, JSON_OBJECTID);
         String owner = getAttributeAsString(attributes, OWNER);
-        String vaghallare = getAttributeAsString(attributes, "Vaghallare"); // Unused in output?
 
         String id = getAttributeAsString(attributes, "ID");
         id = handleNullId(id);
