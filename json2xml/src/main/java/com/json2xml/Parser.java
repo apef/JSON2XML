@@ -33,7 +33,8 @@ public class Parser {
   private final String JSON_FEATURES = "features";
   private final String FASTIGETSAGARE_STR = "ga:";
   private final Set<String> invalidNames = Set.of("kalmar kommun - fastighetsservice", "trafikverket");
-
+  private final String MISSING_ID = "ID saknas";
+  private final String MISSING_NAME = "Namn saknas";
 
   /***
    * Parses a JSON object in string representation into objects in order to extract values from it
@@ -149,14 +150,14 @@ public class Parser {
   }
 
   String handleNullId(String id) {
-    id = (id == null) ? "ID saknas" : id;
+    id = (id == null) ? MISSING_ID : id;
 
     return id;
   }
 
   boolean isSelectable(String name) {
     if (name.equals(null)) {
-      throw new NullPointerException("Name cannot be null");
+      name = MISSING_NAME;
     }
 
     name = name.toLowerCase();
@@ -168,7 +169,7 @@ public class Parser {
 
   String generalizeOwnerName(String name) {
     if (name.equals(null)) {
-      throw new NullPointerException("Name cannot be null");
+      name = MISSING_NAME;
     }
 
     if (name.toLowerCase().contains("ga:")) {

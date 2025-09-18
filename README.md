@@ -48,8 +48,6 @@ If going with the second option, then execute the following command in your term
 mvn -Dexec.mainClass=com.json2xml.Main exec:java
 ```
 
-
-
 ## Error handling
 When it comes to my solution and where things could go wrong in the code, the biggest issues lie within the reading of JSON objects. For example, consider the following.
 
@@ -80,6 +78,5 @@ JsonArray features = jsonbj.getAsJsonArray(JSON_FEATURES);
 If the input were to not have any Features (the tag itself is not present in the JSON object) then that could lead to issues. Right now I have a check to see if the retrieval of the Features attribute became null, and if so, simply write an empty element in the XML. It should not crash at least.
 
 With larger data sets (larger input JSON), the issues that can stem from this code is slower processing. As the input is read sequentially (taking out the content from each lamp, writing it into the XML, one by one), the processing time will take longer with each increase in the amount of entries. For around a couple of thousand entries, this should still not be a big issue but if the data were to become GB's in size, then that may lead to a longer wait before the XML is produced.
-
 
 Since I write the XML within the loop where the attributes of each Lamp is extracted, if some exception where to occur then the XML document might not get to be written to completion. This issue has not presented itself with the amount of data I have at hands at this current time though. As long as the data stays within the format provided by the test data, then there should not be any issues down the line.
