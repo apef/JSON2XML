@@ -1,5 +1,6 @@
 package com.json2xml;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,32 +14,17 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 public class MainTest {
+
+  // Tests to ensure that all needed files are able to be read.
   @Test
-  void convertsJsonToExpectedXml() throws XMLStreamException, IOException {
-    // Using input JSON that has null ID's removed
-    // This ensures that the input and output match exactly (as the expected output has removed null ID entries)
-    String json = readResource("Null_ID_removed.JSON");
-    String expectedXml = readResource("ExpectedXML.XML");
-
-    Parser parser = new Parser();
-    String convertedXML = parser.parseXML(json);
-
-    assertEquals(expectedXml, convertedXML);
-  }
-
-  @Test
-  void readJsonToString() {
+  @DisplayName("Verifies if the resource reader method is able to read a file from the classpath")
+  void filesAreAbleToBeReadFromClasspath() {
     String json = readResource("RAWDATA.JSON");
     assertFalse(json == null);
   }
 
   @Test
-  void readXmlToString() {
-    String xml = readResource("ExpectedXML.XML");
-    assertFalse(xml == null);
-  }
-
-  @Test
+  @DisplayName("Tries to parse JSON in order to verify if it is valid or not")
   void verifiesIfValidJson() {
     String validJson = readResource("Null_ID_removed.JSON");
     String invalidJson = "geometry: {x:this, y: shouldFail";
@@ -52,6 +38,58 @@ public class MainTest {
   }
 
   @Test
+  @DisplayName("Verifies if the output from the parser is not null")
+  void parserOutputNotNull() throws XMLStreamException, IOException {
+    String json = readResource("Null_ID_removed.JSON");
+
+    Parser parser = new Parser();
+    String xml = parser.parseXML(json);
+
+    assertNotNull(xml);
+  }
+
+  @Test
+  @DisplayName("Tests to verify that the parser is able to detect IDs that are null and handles them correctly")
+  void changesNullIdToReadableResult() throws XMLStreamException {
+    String expectedResult = "ID saknas";
+    String nullId = null;
+
+    Parser parser = new Parser();
+    String result = parser.handleNullId(nullId);
+
+    assertEquals(expectedResult, result);
+  }
+
+  
+  @Test
+  @DisplayName("Tests the parser in order to see if it handles 'GA' owner names properly")
+  void generalizesOwnerNames() {
+    String owner = "MELBY GA:2";
+    String expectedResult = "GA (fastighetesägare i området)";
+
+    Parser parser = new Parser();
+    String actual = parser.generalizeOwnerName(owner);
+
+    assertEquals(expectedResult, actual);
+  }
+
+
+  @Test
+  @DisplayName("Verifies if the converted input JSON into XML is identical with the expected XML output")
+  void convertsJsonToExpectedXml() throws XMLStreamException, IOException {
+    // Using input JSON that has null ID's removed
+    // This ensures that the input and output match exactly (as the expected output has removed null ID entries)
+    String json = readResource("Null_ID_removed.JSON");
+    String expectedXml = readResource("ExpectedXML.XML");
+
+    Parser parser = new Parser();
+    String convertedXML = parser.parseXML(json);
+
+    assertEquals(expectedXml, convertedXML);
+  }
+
+  @Test
+  @DisplayName("Tries to parse XML in order to verify if it has valid formatting")
   void verifiesIfValidXML() throws IOException, XMLStreamException {
     String json = readResource("Null_ID_removed.JSON");
     String invalidXML = readResource("InvalidXML.XML");
@@ -65,27 +103,7 @@ public class MainTest {
   }
 
   @Test
-  void parserOutputNotNull() throws XMLStreamException, IOException {
-    String json = readResource("Null_ID_removed.JSON");
-
-    Parser parser = new Parser();
-    String xml = parser.parseXML(json);
-
-    assertNotNull(xml);
-  }
-
-  @Test
-  void changesNullIdToReadableResult() throws XMLStreamException {
-    String expectedResult = "ID saknas";
-    String nullId = null;
-
-    Parser parser = new Parser();
-    String result = parser.handleNullId(nullId);
-
-    assertEquals(expectedResult, result);
-  }
-
-  @Test
+  @DisplayName("Verifies if the parser correctly handles a case where no features (lamps) were provided")
   void EmptyFeaturesShouldLeadToEmptyGeometriesElement() throws XMLStreamException, IOException {
     String json = readResource("DataNoFeatures.JSON");
     String expectedResult = readResource("EmptyElementXML.XML");
@@ -100,17 +118,6 @@ public class MainTest {
     // Due to this I chose to use <Geometries></Geometries> as the "empty element"
     // instead. Semantically, they are equivalent for any XML parser.
     assertEquals(expectedResult, xml);
-  }
-
-  @Test
-  void generalizesOwnerNames() {
-    String owner = "MELBY GA:2";
-    String expectedResult = "GA (fastighetesägare i området)";
-
-    Parser parser = new Parser();
-    String actual = parser.generalizeOwnerName(owner);
-
-    assertEquals(expectedResult, actual);
   }
 
   private static String readResource(String path) {
@@ -132,8 +139,8 @@ public class MainTest {
   /**
    * Verifies XML by trying to read it, if the XMLStreamReader cannot read the next line then the syntax/format
    * the provided XML is malformed and an exception is thrown. Source for this information: https://stackoverflow.com/questions/38255981/stax-well-formedness-check-of-xml
-   * @param xml
-   * @return
+   * @param xml the provided XML in a string representation
+   * @return true if valid XML format or false if invalid
    */
   public static boolean verifyXML(String xml) {
     boolean isValidXML = false;

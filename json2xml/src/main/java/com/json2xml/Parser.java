@@ -34,6 +34,16 @@ public class Parser {
   private final String FASTIGETSAGARE_STR = "ga:";
   private final Set<String> invalidNames = Set.of("kalmar kommun - fastighetsservice", "trafikverket");
 
+
+  /***
+   * Parses a JSON object in string representation into objects in order to extract values from it
+   * which are written into XML.
+   * 
+   * @param json a json object in string representation
+   * @return XML in string representation or null if input json was malformed
+   * @throws XMLStreamException if it encounters malformatted XML
+   * @throws IOException if IO cannot be closed
+   */
   public String parseXML(String json) throws XMLStreamException, IOException {
     StringWriter output = new StringWriter();
     XMLOutputFactory XMLOut = XMLOutputFactory.newFactory();
@@ -104,37 +114,28 @@ public class Parser {
     return output.toString();
   }
 
-  public String handleNullId(String id) {
-    id = (id == null) ? "ID saknas" : id;
-
-    return id;
-  }
-
-  public boolean isSelectable(String name) {
-    if (name.equals(null)) {
-      throw new NullPointerException("Name cannot be null");
-    }
-
-    name = name.toLowerCase();
-    if (invalidNames.contains(name) || name.contains(FASTIGETSAGARE_STR)) {
+  /**
+   * Tests if provided JSON is valid by attempting to parse it. 
+   * @param json a JSON object in string representation
+   * @return true if valid JSON. False if the JSON contained invalid syntax
+   */
+  public boolean isValidJson(String json) {
+    try {
+      JsonParser.parseString(json);
+      return true;
+    } catch (JsonSyntaxException err) {
       return false;
     }
-    return true;
   }
 
-  public String generalizeOwnerName(String name) {
-    if (name.equals(null)) {
-      throw new NullPointerException("Name cannot be null");
-    }
-
-    if (name.toLowerCase().contains("ga:")) {
-      // In XML it says: 'fastighetesägare', using that to pass the tests for now.
-      name = "GA (fastighetesägare i området)";
-    }
-
-    return name;
-  }
-
+  /**
+   * A wrapper for writing child elements in XML with correct indentation using an XMLStreamWriter.
+   * @param XMLWriter a XMLStreamWriter object
+   * @param tag a string that shall represent the element's tag
+   * @param value the value inside the created element
+   * @param depth the amount of indentation
+   * @throws XMLStreamException if it encounters an issue with the XMLStream, perhaps it was closed prematurely
+   */
   public void writeElement(XMLStreamWriter XMLWriter, String tag, String value, int depth) throws XMLStreamException {
     XMLWriter.writeCharacters("\t".repeat(depth));
     XMLWriter.writeStartElement(tag);
@@ -147,7 +148,38 @@ public class Parser {
     XMLWriter.writeCharacters("\n");
   }
 
-  public String getAttributeAsString(JsonObject object, String value) {
+  String handleNullId(String id) {
+    id = (id == null) ? "ID saknas" : id;
+
+    return id;
+  }
+
+  boolean isSelectable(String name) {
+    if (name.equals(null)) {
+      throw new NullPointerException("Name cannot be null");
+    }
+
+    name = name.toLowerCase();
+    if (invalidNames.contains(name) || name.contains(FASTIGETSAGARE_STR)) {
+      return false;
+    }
+    return true;
+  }
+
+  String generalizeOwnerName(String name) {
+    if (name.equals(null)) {
+      throw new NullPointerException("Name cannot be null");
+    }
+
+    if (name.toLowerCase().contains("ga:")) {
+      // In XML it says: 'fastighetesägare', using that to pass the tests for now.
+      name = "GA (fastighetesägare i området)";
+    }
+
+    return name;
+  }
+
+  String getAttributeAsString(JsonObject object, String value) {
     String returnValue = null;
     try {
       returnValue = object.get(value).getAsString();
@@ -156,14 +188,5 @@ public class Parser {
     }
 
     return returnValue;
-  }
-
-  public boolean isValidJson(String json) {
-    try {
-      JsonParser.parseString(json);
-      return true;
-    } catch (JsonSyntaxException err) {
-      return false;
-    }
   }
 }
