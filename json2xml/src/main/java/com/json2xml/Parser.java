@@ -185,7 +185,7 @@ public class Parser {
     try {
       returnValue = object.get(value).getAsString();
     } catch (UnsupportedOperationException | NullPointerException err) {
-      System.err.println(err + " " + value);
+      System.err.println("Attribute '" + value + "' was null. " + err);
     }
 
     return returnValue;
