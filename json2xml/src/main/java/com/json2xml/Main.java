@@ -7,7 +7,7 @@ import javax.xml.stream.*;
 
 public class Main {
   public static void main(String[] args) throws IOException {
-    String jsonPath = "/RAWDATA.JSON";
+    String jsonPath = "/rawdata.json";
     String jsonStr = readDocument(jsonPath);
 
     if (jsonStr.equals(null)) {

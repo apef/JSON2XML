@@ -19,14 +19,14 @@ public class MainTest {
   @Test
   @DisplayName("Verifies if the resource reader method is able to read a file from the classpath")
   void filesAreAbleToBeReadFromClasspath() {
-    String json = readResource("RAWDATA.JSON");
+    String json = readResource("rawdata.json");
     assertFalse(json == null);
   }
 
   @Test
   @DisplayName("Tries to parse JSON in order to verify if it is valid or not")
   void verifiesIfValidJson() {
-    String validJson = readResource("Null_ID_removed.JSON");
+    String validJson = readResource("null_id_removed.json");
     String invalidJson = "geometry: {x:this, y: shouldFail";
     Parser parse = new Parser();
     Boolean isValid = parse.isValidJson(validJson);
@@ -40,7 +40,7 @@ public class MainTest {
   @Test
   @DisplayName("Verifies if the output from the parser is not null")
   void parserOutputNotNull() throws XMLStreamException, IOException {
-    String json = readResource("Null_ID_removed.JSON");
+    String json = readResource("null_id_removed.json");
 
     Parser parser = new Parser();
     String xml = parser.parseXML(json);
@@ -79,8 +79,8 @@ public class MainTest {
   void convertsJsonToExpectedXml() throws XMLStreamException, IOException {
     // Using input JSON that has null ID's removed
     // This ensures that the input and output match exactly (as the expected output has removed null ID entries)
-    String json = readResource("Null_ID_removed.JSON");
-    String expectedXml = readResource("ExpectedXML.XML");
+    String json = readResource("null_id_removed.json");
+    String expectedXml = readResource("expectedXml.xml");
 
     Parser parser = new Parser();
     String convertedXML = parser.parseXML(json);
@@ -91,8 +91,8 @@ public class MainTest {
   @Test
   @DisplayName("Tries to parse XML in order to verify if it has valid formatting")
   void verifiesIfValidXML() throws IOException, XMLStreamException {
-    String json = readResource("Null_ID_removed.JSON");
-    String invalidXML = readResource("InvalidXML.XML");
+    String json = readResource("null_id_removed.json");
+    String invalidXML = readResource("invalidXml.xml");
 
     Parser parser = new Parser();
     String convertedXML = parser.parseXML(json);
@@ -105,7 +105,7 @@ public class MainTest {
   @Test
   @DisplayName("Verifies if the parser correctly handles a case where no features (lamps) were provided")
   void EmptyFeaturesShouldLeadToEmptyGeometriesElement() throws XMLStreamException, IOException {
-    String json = readResource("DataNoFeatures.JSON");
+    String json = readResource("dataNoFeatures.json");
     String expectedResult = readResource("EmptyElementXML.XML");
     Parser parser = new Parser();
     String xml = parser.parseXML(json);
