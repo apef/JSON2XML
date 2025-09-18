@@ -77,7 +77,7 @@ public class MainTest {
     String expectedResult = readResource("/EmptyElementXML.XML");
     Parser parser = new Parser();
     String xml = parser.parseXML(json);
-
+    
     // both <Geometries\> and <Geometries></Geometries> are equivalent. 
     // When I used XMLStreamWriter.WriteEmptyElement(ElementString) it produced: "<Geometries" no ending "\>"
     // I cannot see the issue for why this happens, as I flush and close the streams and write no attributes afterwards.

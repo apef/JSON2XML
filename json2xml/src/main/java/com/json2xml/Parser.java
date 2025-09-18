@@ -31,6 +31,8 @@ public class Parser {
   private final String WKTGEOMETRY = "WKTGeometry";
   private final String SELECTABLE = "Selectable";
   private final String JSON_FEATURES = "features";
+  private final String FASTIGETSAGARE_STR = "ga:";
+  private final Set<String> invalidNames = Set.of("kalmar kommun - fastighetsservice", "trafikverket");
 
   public String parseXML(String json) throws XMLStreamException, IOException {
     StringWriter output = new StringWriter();
@@ -48,20 +50,22 @@ public class Parser {
 
     XMLWriter.writeStartDocument("UTF-8", "1.0");
     XMLWriter.writeCharacters("\n");
+
     if (features == null) {
-      System.out.println("Size less than one");
+
       XMLWriter.writeStartElement(XML_GEOMETRIES_ELEMENT);
       XMLWriter.writeEndElement();
-      // XMLWriter.writeEmptyElement(XML_GEOMETRIES_ELEMENT);
-      // XMLWriter.flush();
+
     } else {
 
       XMLWriter.writeStartElement(XML_GEOMETRIES_ELEMENT);
       XMLWriter.writeCharacters("\n");
       for (JsonElement jsonElement : features) {
+
         XMLWriter.writeCharacters("\t");
         XMLWriter.writeStartElement(XML_GEOMETRY_ELEMENT);
         XMLWriter.writeCharacters("\n");
+
         JsonObject feature = jsonElement.getAsJsonObject();
         JsonObject attributes = feature.getAsJsonObject(ATTRIBUTES);
         JsonObject geometry = feature.getAsJsonObject(JSON_GEOMETRY);
@@ -88,7 +92,7 @@ public class Parser {
         writeElement(XMLWriter, WKTGEOMETRY, XY, 2);
         writeElement(XMLWriter, SELECTABLE, selectableStr, 2);
         writeElement(XMLWriter, ICONURLKEY, iconURL, 2);
-        
+
         XMLWriter.writeCharacters("\t");
         XMLWriter.writeEndElement();
         XMLWriter.writeCharacters("\n");
@@ -96,7 +100,6 @@ public class Parser {
       XMLWriter.writeEndElement();
     }
 
-    String XML = output.toString();
     XMLWriter.close();
     output.close();
     return output.toString();
@@ -108,7 +111,23 @@ public class Parser {
     return id;
   }
 
+  public boolean isSelectable(String name) {
+    if (name.equals(null)) {
+      throw new NullPointerException("Name cannot be null");
+    }
+
+    name = name.toLowerCase();
+    if (invalidNames.contains(name) || name.contains(FASTIGETSAGARE_STR)) {
+      return false;
+    }
+    return true;
+  }
+
   public String generalizeOwnerName(String name) {
+    if (name.equals(null)) {
+      throw new NullPointerException("Name cannot be null");
+    }
+
     if (name.toLowerCase().contains("ga:")) {
       // In XML it says: 'fastighetesägare', using that to pass the tests for now.
       name = "GA (fastighetesägare i området)";
@@ -120,19 +139,13 @@ public class Parser {
   public void writeElement(XMLStreamWriter XMLWriter, String tag, String value, int depth) throws XMLStreamException {
     XMLWriter.writeCharacters("\t".repeat(depth));
     XMLWriter.writeStartElement(tag);
+
     if (value != null) {
       XMLWriter.writeCharacters(value);
     }
+
     XMLWriter.writeEndElement();
     XMLWriter.writeCharacters("\n");
-  }
-
-  public boolean isSelectable(String name) {
-    Set<String> invalidNames = Set.of("Kalmar kommun - Fastighetsservice", "Trafikverket");
-    if (!invalidNames.contains(name) && !(name.toLowerCase().contains("GA:".toLowerCase()))) {
-      return true;
-    }
-    return false;
   }
 
   public String getAttributeAsString(JsonObject object, String value) {
